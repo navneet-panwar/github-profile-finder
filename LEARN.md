@@ -1,4 +1,4 @@
-# LEARN.md — studying GitFinder
+﻿# LEARN.md â€” studying GitFinder
 
 ## 1. Map of the project
 
@@ -7,11 +7,11 @@
 | `index.html`          | The page markup: title, search input, recent searches, status line, profile card, repo list and "Load more" button. The code finds elements by their ids.       |
 | `src/elements.ts`     | Looks up every element once (`document.querySelector`) with the right type, and throws an error if one is missing. The rest of the app imports `els` from here. |
 | `src/types.ts`        | `GitHubUser` and `GitHubRepo` (our clean version of the data) and the `SearchResult` union.                                                                     |
-| `src/api.ts`          | `isValidUsername` and `normalizeUsername` — pure string checks, no network.                                                                                     |
+| `src/api.ts`          | `isValidUsername` and `normalizeUsername` â€” pure string checks, no network.                                                                                     |
 | `src/utils.ts`        | Pure helpers: `debounce`, `formatCount`, `addRecent`, `cleanRecent`.                                                                                            |
 | `src/search.ts`       | `findUser(input)`: checks the name, calls the API with `fetch`, turns the raw JSON into a `GitHubUser`, and turns every failure into a `SearchResult`.          |
-| `src/repos.ts`        | `fetchRepos(username, page)`, `canLoadMore`, `toRepos` — one page of six repos.                                                                                 |
-| `src/storage.ts`      | `loadRecent` / `saveRecent` — localStorage, safe against broken data.                                                                                           |
+| `src/repos.ts`        | `fetchRepos(username, page)`, `canLoadMore`, `toRepos` â€” one page of six repos.                                                                                 |
+| `src/storage.ts`      | `loadRecent` / `saveRecent` â€” localStorage, safe against broken data.                                                                                           |
 | `src/ui.ts`           | Everything that draws: `showLoading`, `showError`, `showEmptyState`, `showProfile`, `appendRepos`, `setLoadMore`, `showNoRepos`, `createRepoCard`.              |
 | `src/main.ts`         | The app state and the event wiring: input typing, Enter, Load more, recent chips, Clear, `?user=`.                                                              |
 | `src/style.css`       | CSS variables for light/dark, layout, focus styles, the phone layout.                                                                                           |
@@ -23,7 +23,7 @@
 
 `fetch(url)` does not give you data. It gives you a **promise**: a box that will
 hold the answer later. A promise has three states: pending, fulfilled, rejected.
-`await` "pauses" the current async function until the promise settles — the rest
+`await` "pauses" the current async function until the promise settles â€” the rest
 of the page keeps running meanwhile.
 
 In `src/search.ts`, `requestUser` is an `async` function. Every `await` inside it
@@ -67,7 +67,7 @@ fields in the `if`/`switch` branch that proves which one you have.
 ### Loading, error and empty states (`src/ui.ts`)
 
 - **Loading**: `showLoading(username)` clears the old results and writes
-  "Looking up octocat…" into `#status-message`. That element has
+  "Looking up octocatâ€¦" into `#status-message`. That element has
   `role="status" aria-live="polite"`, so screen readers say it out loud.
 - **Error**: `showError(result)` switches on `result.status` and writes the right
   sentence (not found / rate limit / invalid name / network), then adds
@@ -77,7 +77,7 @@ fields in the `if`/`switch` branch that proves which one you have.
 - All of them call `hideResults()` first, so you never see a profile from the
   previous search under a new error.
 
-### Debounce (`src/utils.ts`) — a closure example
+### Debounce (`src/utils.ts`) â€” a closure example
 
 ```ts
 export function debounce<T>(
@@ -120,7 +120,7 @@ instantly without a request.
 `response.json()` returns `unknown`. `toUser` checks each field
 (`typeof data.login !== "string"` and so on) and returns `GitHubUser | null`.
 GitHub uses `null` for empty text, so `text()` turns that into `""`. The page
-then only handles simple strings — no `null` checks everywhere.
+then only handles simple strings â€” no `null` checks everywhere.
 
 ### Repositories and Load more (`src/repos.ts`, `src/main.ts`)
 
@@ -150,24 +150,24 @@ by comparing `login !== currentLogin`.
 
 ## 3. TypeScript syntax used here
 
-- **`interface`** — the shape of an object: `interface GitHubRepo { name: string; stars: number }`.
-- **Union type** — a value is one of a few options: `"hidden" | "ready" | "loading"`.
-- **Discriminated union** — a union of objects that each have a `status` field, so
+- **`interface`** â€” the shape of an object: `interface GitHubRepo { name: string; stars: number }`.
+- **Union type** â€” a value is one of a few options: `"hidden" | "ready" | "loading"`.
+- **Discriminated union** â€” a union of objects that each have a `status` field, so
   TypeScript can tell them apart in an `if`/`switch`.
-- **`unknown` vs `any`** — `unknown` means "check before use". We never use `any`.
-- **Narrowing** — after `if (typeof value !== "object" || value === null) return null;`,
+- **`unknown` vs `any`** â€” `unknown` means "check before use". We never use `any`.
+- **Narrowing** â€” after `if (typeof value !== "object" || value === null) return null;`,
   TypeScript knows `value` is a real object.
-- **Type predicate / cast** — `value as Record<string, unknown>` is a promise to
+- **Type predicate / cast** â€” `value as Record<string, unknown>` is a promise to
   TypeScript ("I checked it, it is an object"), used only right after a check.
-- **Generic function** — `function element<T extends HTMLElement>(...)` — the
+- **Generic function** â€” `function element<T extends HTMLElement>(...)` â€” the
   caller picks the element type, so `.src` works only on an `<img>`.
-- **`type` export** — `import { findUser, type SearchResult }` imports the value
+- **`type` export** â€” `import { findUser, type SearchResult }` imports the value
   and the type from one module.
-- **`ReturnType<typeof setTimeout>`** — the browser returns a number, Node returns
+- **`ReturnType<typeof setTimeout>`** â€” the browser returns a number, Node returns
   a Timeout object. This type works in both.
-- **`null` in a type** — `repoCount: number | null` means GitHub may not tell us
+- **`null` in a type** â€” `repoCount: number | null` means GitHub may not tell us
   the total.
-- **`void`** — `void search(name)` starts an async function but says "I am not
+- **`void`** â€” `void search(name)` starts an async function but says "I am not
   waiting for the result here".
 
 ## 4. Ten interview-style questions
@@ -182,7 +182,7 @@ It wraps the return value in a promise, allows `await` inside, and turns a throw
 error into a rejected promise instead of a hard crash.
 
 **3. Why does `fetch` not reject on a 404?**
-Because a 404 is a real HTTP answer — the server is fine, the URL just does not
+Because a 404 is a real HTTP answer â€” the server is fine, the URL just does not
 exist. `fetch` only rejects when the request itself fails (no connection, DNS
 error, CORS). That is why `response.ok` / `response.status` must be checked.
 
@@ -209,28 +209,28 @@ JSON from a server has no type information, so any type would be a guess. `unkno
 forces a check, which is exactly what `toUser` and `toRepos` do.
 
 **9. Why `try/catch` around `JSON.parse` and `localStorage`?**
-Both throw on bad input — broken JSON text or blocked storage. Without the catch
+Both throw on bad input â€” broken JSON text or blocked storage. Without the catch
 the whole script would stop and the page would be blank.
 
 **10. What does `aria-live="polite"` do?**
 It tells screen readers to announce changes to that element when the user is
-idle. Combined with `role="status"`, "Looking up octocat…" and error messages are
+idle. Combined with `role="status"`, "Looking up octocatâ€¦" and error messages are
 spoken without stealing focus.
 
 ## 5. Suggested reading order
 
 1. Run it (`npm run dev`) and type `octocat` slowly, then delete it, then type
    something that does not exist.
-2. `index.html` — the ids and the empty containers.
-3. `src/types.ts` — the shapes and the union.
-4. `src/utils.ts` with `tests/utils.test.ts` — run `npm test` and match tests to
+2. `index.html` â€” the ids and the empty containers.
+3. `src/types.ts` â€” the shapes and the union.
+4. `src/utils.ts` with `tests/utils.test.ts` â€” run `npm test` and match tests to
    functions.
-5. `src/api.ts` — two small string functions.
-6. `src/search.ts` — the request, the status checks and `toUser`.
-7. `src/repos.ts` — the paging rule.
-8. `src/ui.ts` — all the state functions.
-9. `src/main.ts` — the last one, because every name is now familiar.
-10. `src/style.css` — the variables at the top and the media queries at the bottom.
+5. `src/api.ts` â€” two small string functions.
+6. `src/search.ts` â€” the request, the status checks and `toUser`.
+7. `src/repos.ts` â€” the paging rule.
+8. `src/ui.ts` â€” all the state functions.
+9. `src/main.ts` â€” the last one, because every name is now familiar.
+10. `src/style.css` â€” the variables at the top and the media queries at the bottom.
 
 ## 6. Five exercises
 
