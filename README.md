@@ -1,90 +1,98 @@
-# GitHub Profile Finder
+# GitFinder
 
-A small page where you type a GitHub username and get their profile plus their
-five most recently updated public repositories. No login, no build-time secrets,
-just the public GitHub API.
+A small page that looks up a GitHub user and shows their profile and
+repositories. No login and no API key, just the public GitHub REST API.
 
-I made this to practise `fetch` with TypeScript: how to handle loading, a missing
-user, a bad username and API errors without crashing.
+I built it to practise TypeScript with the DOM: `fetch`, `async/await`, typing
+data that comes from a server, and showing loading, error and empty states
+properly.
 
 ## Features
 
-- Search a username (button or Enter key)
-- Profile card: avatar, name, bio, location, company, website, join date,
-  number of repos, followers and following
-- The five latest public repositories with language, stars and forks
-- Clear messages for: empty input, invalid username, user not found,
-  rate limit reached, and network problems
-- The searched user is written to the URL (`?user=name`) so you can refresh or
-  share the link
-- Responsive layout and light/dark theme from `prefers-color-scheme`
-- Keyboard friendly inputs and links with visible focus outlines
+- Search by username, **debounced** by 500 ms (a small hand-written helper in
+  `src/utils.ts`). Pressing Enter searches straight away.
+- Profile card: avatar, name, bio, public repo count, followers, following and a
+  link to the profile on GitHub.
+- Repositories (name, description, language, stars), **6 at a time**, with a
+  "Load more" button.
+- Loading, error (not found / network / rate limit / invalid name) and empty
+  states, announced through an `aria-live` region.
+- Recent searches in `localStorage` (max 5, newest first, no duplicates) that you
+  can click again or clear.
+- Responsive layout, light/dark mode via `prefers-color-scheme`, visible focus
+  styles, labelled search input, alt text on the avatar.
 
-## How to run
+## Run it
 
 ```bash
 npm install
 npm run dev      # http://localhost:5173
 ```
 
-## Tests
+## Tests and build
 
 ```bash
-npm test         # Vitest
-npm run build    # type-check + production build into dist/
+npm test         # Vitest, 10 tests
+npm run build    # type-check with tsc, then build to dist/
 ```
 
-The tests cover the pure helpers in `src/api.ts`: username validation and
-normalising, number formatting, date formatting and filtering the repo list.
+## Deploy to Vercel
 
-## Deploying
-
-1. Push the folder to GitHub.
-2. On Vercel: "Add New Project" → import the repo.
-3. It reads `vercel.json`, runs `npm run build` and serves `dist/`.
+1. Push this folder to a GitHub repository.
+2. On Vercel, add a new project and import that repository.
+3. Vercel reads `vercel.json`, runs `npm run build` and serves `dist/`.
 4. Deploy.
 
 ## Folder structure
 
 ```
-index.html    page skeleton with all the ids
+index.html      page markup with the ids the code uses
 src/
-  types.ts    GitHubUser, GitHubRepo and the SearchResult union
-  api.ts      username checks, URL building, JSON checks, small formatters
-  github.ts   the two fetch functions and searchUser()
-  ui.ts       fills the profile card and the repo list
-  main.ts     form submit, loading state, "latest search wins" guard
-  style.css   all the styles
+  main.ts       app state, search, load more, recent searches
+  elements.ts   looks up all the elements once, with types
+  ui.ts         everything that draws on the page
+  types.ts      GitHubUser, GitHubRepo and the SearchResult union
+  search.ts     findUser(): username -> user profile, with try/catch
+  repos.ts      fetchRepos(): one page of 6 repos
+  api.ts        username validation and normalising
+  utils.ts      debounce, formatCount, addRecent, cleanRecent
+  storage.ts    reading and writing recent searches in localStorage
+  style.css     all the styles
 tests/
-  api.test.ts tests for the pure helpers
+  utils.test.ts tests for the pure helpers in utils.ts, repos.ts and search.ts
 ```
 
 ## Decisions I made
 
-- **No token, no proxy.** The public API allows 60 requests per hour per IP.
-  That is enough for a demo; the page tells the user when it runs out.
-- **Two requests per search** (user + repos) instead of one GraphQL call, because
-  REST is simpler to read and does not need a token.
-- **If the repo request fails, the profile still shows.** The repo list is empty
-  rather than the whole page failing.
-- **The input is checked before fetching.** GitHub usernames are letters, digits
-  and single hyphens, so an obviously wrong input gets an instant message.
-- **Search is on submit only**, not on every keystroke, so typing "octocat" does
-  not send nine requests.
-- **No saved recent searches.** I kept it to one screen of output.
+- **The free API allows 60 requests an hour per network.** A search costs two
+  requests (user + first page of repos), so I stop "Load more" after 5 pages
+  rather than quietly burning the limit.
+- **One request per page of repositories.** GitHub has no "all repos" call, so
+  pagination is the natural way to do it.
+- **Invalid usernames never reach GitHub.** The regex in `api.ts` rejects them
+  locally with a message.
+- **Old responses are ignored.** A counter in `main.ts` (`searchNumber`) makes
+  sure a slow answer to an older search cannot replace a newer one.
+- **Recent searches are lowercased.** "Octocat" and "octocat" are the same user,
+  so they should not take two slots.
+- **The whole page starts hidden** (`<html hidden>`) and is revealed by the first
+  render. Without that, elements with `hidden` in the HTML can flash on screen
+  when the script sets them to `false`.
 
 ## What I learned
 
-- How to type `fetch` responses: `fetch` gives `unknown` data, so I wrote small
-  check functions (`isGitHubUser`, `isGitHubRepo`) instead of trusting the JSON.
-- Why a union type like `SearchResult` is handy for UI state: a `switch` makes
-  TypeScript tell me if I forgot a case.
-- How to stop an older, slower response from overwriting a newer search
-  (`latestSearch` counter in `main.ts`).
+- How `fetch` works with promises: it only rejects when the network fails, so
+  status codes like 404 have to be checked by hand.
+- How debounce works, and why it needs a closure (each call shares the same
+  timer variable so it can be cancelled).
+- Why API data is `unknown` until you check it, and how to turn it into my own
+  interfaces.
+- How to keep the page honest while requests are in flight: a loading line, then
+  either the profile or one clear error.
 
 ## What I'd improve
 
-- Cache recent searches in `localStorage` and show them as chips.
-- Add a "load more" button for repositories.
-- Show a skeleton card while loading instead of only text.
-- Use `AbortController` to actually cancel outdated requests.
+- Cache results for a few minutes so going back to a profile does not use a request.
+- Use `AbortController` to cancel the request that is no longer needed.
+- Show the total number of repositories next to "Load more" (the `Link` header
+  already contains it).

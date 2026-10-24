@@ -1,27 +1,27 @@
 :root {
-  --bg: #f4f6fa;
+  --bg: #f5f7fa;
   --surface: #ffffff;
-  --text: #151b26;
-  --muted: #59637a;
-  --border: #d8dee9;
-  --accent: #1f6feb;
+  --text: #161c26;
+  --muted: #5b6577;
+  --border: #d9dfe8;
+  --accent: #1a5fd0;
   --accent-text: #ffffff;
-  --accent-soft: #e7f0ff;
-  --error: #b42318;
+  --accent-soft: #e8f0fe;
+  --error: #b3261e;
   --radius: 12px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0e1117;
-    --surface: #161b23;
-    --text: #e6edf3;
-    --muted: #9aa4b2;
-    --border: #2b3240;
-    --accent: #58a6ff;
-    --accent-text: #0e1117;
-    --accent-soft: #17263d;
-    --error: #ff8f85;
+    --bg: #0f1218;
+    --surface: #171b23;
+    --text: #e6ecf3;
+    --muted: #9aa5b5;
+    --border: #2a303c;
+    --accent: #6ba4ff;
+    --accent-text: #0f1218;
+    --accent-soft: #16243a;
+    --error: #ff9b91;
   }
 }
 
@@ -34,11 +34,11 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
 .wrap {
-  max-width: 820px;
+  max-width: 760px;
   margin: 0 auto;
   padding: 0 16px;
 }
@@ -59,18 +59,11 @@ body {
 
 /* ---------- search ---------- */
 
-.search-form {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin: 16px 0 8px;
-}
-
 .field {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-bottom: 16px;
 }
 
 label {
@@ -90,7 +83,7 @@ input {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 9px 12px;
+  padding: 10px 12px;
   width: 100%;
 }
 
@@ -105,28 +98,79 @@ button {
   font: inherit;
   font-weight: 600;
   cursor: pointer;
-  border: none;
   border-radius: 8px;
-  padding: 10px 18px;
+  border: 1px solid transparent;
+  padding: 8px 16px;
 }
 
-button.primary {
-  background: var(--accent);
-  color: var(--accent-text);
-}
+/* ---------- recent searches ---------- */
 
-.search-form button {
-  /* Lines up with the input, below the label. */
-  margin-top: 1.55rem;
-}
-
-.status {
-  min-height: 1.6em;
-  margin: 4px 0 12px;
+.small-heading {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--muted);
 }
 
-/* ---------- profile card ---------- */
+.chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.chip {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+  padding: 4px 12px;
+  font-weight: 500;
+}
+
+.chip:hover {
+  border-color: var(--accent);
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 4px 0;
+  margin-top: 6px;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+#recent-section {
+  margin-bottom: 16px;
+}
+
+/* ---------- status & empty ---------- */
+
+.status {
+  min-height: 1.5em;
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
+.status[data-tone="error"] {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.empty {
+  margin: 24px 0;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+/* ---------- profile ---------- */
 
 .profile {
   display: grid;
@@ -161,24 +205,9 @@ button.primary {
   margin: 8px 0 0;
 }
 
-.meta {
-  list-style: none;
-  padding: 0;
-  margin: 8px 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-.meta a {
-  color: inherit;
-}
-
 .stats {
   display: flex;
-  gap: 20px;
+  gap: 12px;
   margin: 14px 0;
 }
 
@@ -214,14 +243,14 @@ button.primary {
 }
 
 #repos-section h2 {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   margin: 0 0 10px;
 }
 
 .repos {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -245,7 +274,6 @@ button.primary {
 
 .repo-description {
   margin: 4px 0;
-  color: var(--text);
 }
 
 .repo-meta {
@@ -254,12 +282,19 @@ button.primary {
   color: var(--muted);
 }
 
-.empty {
-  color: var(--muted);
-  padding: 16px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-  text-align: center;
+button.secondary {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+button.secondary:hover:enabled {
+  border-color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: progress;
 }
 
 .footer {
@@ -268,29 +303,21 @@ button.primary {
   font-size: 0.85rem;
 }
 
-/* ---------- phone ---------- */
+/* ---------- phones ---------- */
 
 @media (max-width: 560px) {
-  .search-form {
-    flex-direction: column;
-  }
-
-  .search-form button {
-    margin-top: 0;
-    width: 100%;
-  }
-
   .profile {
     grid-template-columns: 1fr;
     justify-items: center;
     text-align: center;
   }
 
-  .meta {
-    justify-content: center;
-  }
-
   .stats {
     justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  #load-more {
+    width: 100%;
   }
 }
