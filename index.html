@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Look up a GitHub profile and see its public stats and repositories." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <title>GitHub Profile Finder</title>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="wrap">
+        <h1>GitHub Profile Finder</h1>
+        <p>Type a GitHub username to see their profile and latest repositories.</p>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <form id="search-form" class="search-form" role="search" aria-label="Find a GitHub profile">
+        <div class="field">
+          <label for="username-input">GitHub username</label>
+          <input
+            id="username-input"
+            name="username"
+            type="text"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="e.g. octocat"
+            aria-describedby="search-hint"
+          />
+          <p id="search-hint" class="hint">Letters, numbers and single hyphens.</p>
+        </div>
+        <button class="primary" type="submit">Search</button>
+      </form>
+
+      <p id="status-message" class="status" role="status" aria-live="polite"></p>
+
+      <section id="profile" class="profile" aria-labelledby="profile-name" hidden>
+        <img id="profile-avatar" class="avatar" src="" alt="" width="112" height="112" />
+        <div class="profile-info">
+          <h2 id="profile-name"></h2>
+          <p id="profile-login" class="login"></p>
+          <p id="profile-bio" class="bio"></p>
+          <ul id="profile-meta" class="meta">
+            <li id="profile-location"></li>
+            <li id="profile-company"></li>
+            <li id="profile-blog"></li>
+            <li id="profile-joined"></li>
+          </ul>
+          <dl class="stats">
+            <div>
+              <dt>Repos</dt>
+              <dd id="stat-repos">0</dd>
+            </div>
+            <div>
+              <dt>Followers</dt>
+              <dd id="stat-followers">0</dd>
+            </div>
+            <div>
+              <dt>Following</dt>
+              <dd id="stat-following">0</dd>
+            </div>
+          </dl>
+          <a id="profile-link" class="profile-link" href="#" target="_blank" rel="noopener noreferrer">
+            Open profile on GitHub
+          </a>
+        </div>
+      </section>
+
+      <section id="repos-section" aria-labelledby="repos-heading" hidden>
+        <h2 id="repos-heading">Latest repositories</h2>
+        <ul id="repo-list" class="repos"></ul>
+        <p id="no-repos" class="empty" hidden>This user has no public repositories.</p>
+      </section>
+    </main>
+
+    <footer class="wrap footer">
+      <p>Data comes from the public GitHub API. Requests are limited to 60 per hour per visitor.</p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
